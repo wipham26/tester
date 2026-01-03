@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Plaid Link Demo</title>
+    <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+  </head>
+  <body>
+    <button id="link-button">Connect to Chase</button>
+
+    <script>
+      async function createLinkToken() {
+        const response = await fetch("https://YOUR-BACKEND/create_link_token", {
+          method: "POST"
+        });
+        const data = await response.json();
+        return data.link_token;
+      }
+
+      document.getElementById("link-button").onclick = async function () {
+        const linkToken = await createLinkToken();
+
+        const handler = Plaid.create({
+          token: linkToken,
+          onSuccess: function (public_token, metadata) {
+            console.log("Success:", public_token, metadata);
+          },
+          onExit: function (err, metadata) {
+            console.log("Exit:", err, metadata);
+          }
+        });
+
+        handler.open();
+      };
+    </script>
+  </body>
+</html>
