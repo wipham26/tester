@@ -1,0 +1,7 @@
+const handler = Plaid.create({
+  token: "link-sandbox-fdcf84de-1e6a-443c-8b00-b3c2f8618c59",   // <-- paste Postman result here
+  onSuccess: (public_token, metadata) => {
+    console.log("Public token:", public_token);
+    // send public_token to Postman backend
+  }
+});
