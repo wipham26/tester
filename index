@@ -1,7 +1,55 @@
-const handler = Plaid.create({
-  token: "link-sandbox-fdcf84de-1e6a-443c-8b00-b3c2f8618c59",   // <-- paste Postman result here
-  onSuccess: (public_token, metadata) => {
-    console.log("Public token:", public_token);
-    // send public_token to Postman backend
-  }
-});
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Plaid Link Sandbox Demo</title>
+  <script src="https://cdn.plaid.com/link/v2/stable/link-initialize.js"></script>
+</head>
+
+<body>
+  <h2>Plaid Link Sandbox Demo</h2>
+
+  <button id="launch-link">Connect Chase Sandbox</button>
+
+  <pre id="output" style="margin-top:20px; background:#f0f0f0; padding:10px;"></pre>
+
+  <script>
+    // STEP 1: Paste your link_token from Postman here
+    const LINK_TOKEN = "link-sandbox-fdcf84de-1e6a-443c-8b00-b3c2f8618c59";
+
+    // STEP 2: Initialize Plaid Link
+    const handler = Plaid.create({
+      token: LINK_TOKEN,
+
+      onSuccess: function(public_token, metadata) {
+        document.getElementById("output").textContent =
+          "Public Token:\n" + public_token +
+          "\n\nMetadata:\n" + JSON.stringify(metadata, null, 2);
+
+        console.log("Public Token:", public_token);
+
+        // OPTIONAL: Send public_token to your backend (Postman mock server, local server, etc.)
+        /*
+        fetch("https://your-backend-endpoint.com/exchange", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ public_token })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Backend response:", data));
+        */
+      },
+
+      onExit: function(err, metadata) {
+        console.log("User exited Link:", err, metadata);
+      }
+    });
+
+    // STEP 3: Open Plaid Link when button is clicked
+    document.getElementById("launch-link").onclick = function() {
+      handler.open();
+    };
+  </script>
+</body>
+</html>
